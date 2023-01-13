@@ -85,13 +85,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: Text('Favorites'),
                 ),
               ],
-              selectedIndex: 0,
-              onDestinationSelected: (value) {},
+              selectedIndex: selectedIndex,
+              onDestinationSelected: (value) {
+                setState(() {
+                  selectedIndex = value;
+                });
+              },
             ),
           ),
           Expanded(
             child: Container(
-              child: GeneratorPage(),
+              child: page,
             ),
           ),
         ],
@@ -147,7 +151,27 @@ class GeneratorPage extends StatelessWidget {
 class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Blank Page'));
+    var appState = context.watch<MyAppState>();
+
+    if (appState.favorites.isEmpty) {
+      return Center(
+        child: Text('Blank Page'),
+      );
+    }
+
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('You have ${appState.favorites.length} favorites'),
+        ),
+        for (var pair in appState.favorites)
+          ListTile(
+            leading: Icon(Icons.favorite),
+            title: Text(pair.asCamelCase),
+          ),
+      ],
+    );
   }
 }
 
